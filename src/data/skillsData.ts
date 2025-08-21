@@ -1,0 +1,101 @@
+// Comprehensive skills database for the application
+export const skillCategories = {
+  'Programming Languages': [
+    'JavaScript', 'Python', 'Java', 'C++', 'C#', 'TypeScript', 'Go', 'Rust', 'Swift', 'Kotlin',
+    'PHP', 'Ruby', 'Scala', 'R', 'MATLAB', 'SQL', 'NoSQL', 'Dart', 'Perl', 'Haskell'
+  ],
+  'Web Development': [
+    'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Next.js', 'Nuxt.js', 'Svelte',
+    'HTML5', 'CSS3', 'SASS/SCSS', 'Bootstrap', 'Tailwind CSS', 'jQuery', 'Webpack', 'Vite'
+  ],
+  'Mobile Development': [
+    'React Native', 'Flutter', 'iOS Development', 'Android Development', 'Xamarin', 'Ionic',
+    'PhoneGap/Cordova', 'Progressive Web Apps (PWA)', 'Kotlin Multiplatform', 'Unity Mobile'
+  ],
+  'Data Science & Analytics': [
+    'Machine Learning', 'Deep Learning', 'Data Analysis', 'Statistics', 'Pandas', 'NumPy',
+    'Scikit-learn', 'TensorFlow', 'PyTorch', 'Jupyter', 'Tableau', 'Power BI', 'Apache Spark'
+  ],
+  'Cloud & DevOps': [
+    'AWS', 'Azure', 'Google Cloud Platform', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI',
+    'Terraform', 'Ansible', 'Monitoring', 'CI/CD', 'Infrastructure as Code'
+  ],
+  'Database Technologies': [
+    'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Elasticsearch', 'Cassandra', 'DynamoDB',
+    'Firebase', 'SQLite', 'Oracle', 'Neo4j', 'InfluxDB'
+  ],
+  'Design & UX': [
+    'UI/UX Design', 'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator', 'InVision',
+    'Prototyping', 'User Research', 'Wireframing', 'Design Systems', 'Accessibility (a11y)'
+  ],
+  'Soft Skills': [
+    'Communication', 'Leadership', 'Problem Solving', 'Critical Thinking', 'Team Collaboration',
+    'Project Management', 'Time Management', 'Adaptability', 'Creativity', 'Public Speaking',
+    'Mentoring', 'Conflict Resolution', 'Emotional Intelligence', 'Strategic Planning'
+  ],
+  'Tools & Frameworks': [
+    'Git', 'GitHub', 'GitLab', 'Jira', 'Confluence', 'Slack', 'Trello', 'Notion', 'VS Code',
+    'IntelliJ IDEA', 'Postman', 'Chrome DevTools', 'ESLint', 'Prettier'
+  ],
+  'Cybersecurity': [
+    'Network Security', 'Penetration Testing', 'Vulnerability Assessment', 'Incident Response',
+    'Risk Management', 'Compliance', 'Cryptography', 'Ethical Hacking', 'Security Auditing'
+  ]
+};
+
+export const universities = [
+  'Harvard University', 'Stanford University', 'MIT', 'University of California, Berkeley',
+  'Yale University', 'Princeton University', 'Columbia University', 'University of Chicago',
+  'University of Pennsylvania', 'Duke University', 'Northwestern University', 'Johns Hopkins University',
+  'Dartmouth College', 'Brown University', 'Cornell University', 'Rice University',
+  'University of Notre Dame', 'Vanderbilt University', 'Washington University in St. Louis',
+  'Georgetown University', 'Carnegie Mellon University', 'University of Virginia',
+  'University of Michigan', 'University of California, Los Angeles', 'University of North Carolina',
+  'New York University', 'Boston University', 'Northeastern University', 'Georgia Institute of Technology',
+  'University of Southern California', 'University of Florida', 'Ohio State University',
+  'Pennsylvania State University', 'University of Washington', 'University of Wisconsin-Madison',
+  'University of Illinois Urbana-Champaign', 'University of Texas at Austin', 'Texas A&M University'
+];
+
+export const majors = [
+  'Computer Science', 'Software Engineering', 'Data Science', 'Information Technology',
+  'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering',
+  'Biomedical Engineering', 'Aerospace Engineering', 'Business Administration', 'Finance',
+  'Marketing', 'Economics', 'Psychology', 'Biology', 'Chemistry', 'Physics', 'Mathematics',
+  'Statistics', 'Political Science', 'International Relations', 'English Literature',
+  'Communications', 'Graphic Design', 'Art', 'Music', 'Philosophy', 'History',
+  'Anthropology', 'Sociology', 'Education', 'Nursing', 'Pre-Med', 'Pre-Law'
+];
+
+export const careerGoals = {
+  shortTerm: [
+    'Secure a software engineering internship',
+    'Complete a data science certification',
+    'Build a professional portfolio website',
+    'Learn a new programming language',
+    'Contribute to an open-source project',
+    'Attend a tech conference or workshop',
+    'Complete a machine learning course',
+    'Develop a mobile application',
+    'Get AWS/Cloud certification',
+    'Join a coding bootcamp',
+    'Start a technical blog',
+    'Participate in a hackathon'
+  ],
+  longTerm: [
+    'Become a Senior Software Engineer at a tech company',
+    'Lead AI research at a technology company',
+    'Start my own tech company',
+    'Become a Product Manager at a Fortune 500 company',
+    'Work as a Data Scientist at a leading firm',
+    'Become a CTO or technical executive',
+    'Develop cutting-edge technologies',
+    'Work at a top-tier consulting firm',
+    'Become a university professor in computer science',
+    'Lead a development team at a startup',
+    'Become a cybersecurity expert',
+    'Work in fintech innovation',
+    'Develop sustainable technology solutions',
+    'Become a technical architect'
+  ]
+};
