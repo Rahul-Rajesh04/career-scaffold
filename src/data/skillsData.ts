@@ -99,3 +99,30 @@ export const careerGoals = {
     'Become a technical architect'
   ]
 };
+
+
+// Add this to the end of src/data/skillsData.ts
+export const knowledgeGraph = {
+  roles: {
+    "Software Engineer": {
+      required_skills: ["JavaScript", "React", "Node.js", "SQL", "Git", "Python"]
+    },
+    "Data Scientist": {
+      required_skills: ["Python", "SQL", "Statistics", "Machine Learning", "Tableau", "Pandas"]
+    },
+    "Machine Learning Engineer": {
+      required_skills: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "AWS", "Docker"]
+    },
+    "Frontend Developer": {
+      required_skills: ["HTML5", "CSS3", "JavaScript", "React", "TypeScript", "Git"]
+    }
+  },
+  skills: {
+    "Python": { resource: "Complete the 'Python for Everybody' specialization on Coursera." },
+    "React": { resource: "Finish the 'React - The Complete Guide' course on Udemy." },
+    "SQL": { resource: "Practice intermediate SQL queries on HackerRank or LeetCode." },
+    "Machine Learning": { resource: "Take Andrew Ng's 'Machine Learning Specialization' on Coursera." },
+    "TensorFlow": { resource: "Build an image classification project using the TensorFlow documentation." },
+    // Add more resources for other skills as needed
+  }
+};
