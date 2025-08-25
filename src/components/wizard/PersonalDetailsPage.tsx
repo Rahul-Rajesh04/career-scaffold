@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { universities, majors } from '../../data/skillsData';
+import { countryCodes } from '../../data/countryData';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Combobox } from '../ui/combobox';
-import { User, Mail, Phone, MapPin, GraduationCap, BookOpen } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { User, Mail, Phone, MapPin, GraduationCap, BookOpen, Edit } from 'lucide-react';
+import { Button } from '../ui/button';
 
 export function PersonalDetailsPage() {
   const { state, updateCurrentUser } = useApp();
   const currentUser = state.currentUser;
+  const [showCustomUniversityInput, setShowCustomUniversityInput] = useState(false);
   
   if (!currentUser) return null;
 
@@ -20,6 +24,27 @@ export function PersonalDetailsPage() {
       }
     });
   };
+
+  const handlePhoneChange = (part: 'countryCode' | 'number', value: string) => {
+    updateCurrentUser({
+      personalDetails: {
+        ...currentUser.personalDetails,
+        phone: {
+          ...currentUser.personalDetails.phone,
+          [part]: value
+        }
+      }
+    });
+  };
+  
+  const handleUniversitySelect = (value: string) => {
+    handleInputChange('university', value);
+    // If a university is selected from the list, ensure we are not showing the custom input
+    if (showCustomUniversityInput) {
+      setShowCustomUniversityInput(false);
+    }
+  };
+
 
   return (
     <div className="space-y-8 animate-slide-up">
@@ -69,14 +94,31 @@ export function PersonalDetailsPage() {
             <Phone className="w-4 h-4" />
             Phone Number
           </Label>
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="+1-555-123-4567"
-            value={currentUser.personalDetails.phone}
-            onChange={(e) => handleInputChange('phone', e.target.value)}
-            className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
-          />
+          <div className="flex gap-2">
+            <Select
+              value={currentUser.personalDetails.phone.countryCode}
+              onValueChange={(value) => handlePhoneChange('countryCode', value)}
+            >
+              <SelectTrigger className="w-[120px] h-12 bg-muted/30 border-border/50 focus:border-primary/50">
+                <SelectValue placeholder="Code" />
+              </SelectTrigger>
+              <SelectContent>
+                {countryCodes.map((country) => (
+                  <SelectItem key={country.name} value={country.code}>
+                    {country.flag} {country.code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="555-123-4567"
+              value={currentUser.personalDetails.phone.number}
+              onChange={(e) => handlePhoneChange('number', e.target.value)}
+              className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
+            />
+          </div>
         </div>
 
         {/* Location */}
@@ -97,18 +139,41 @@ export function PersonalDetailsPage() {
 
         {/* University */}
         <div className="space-y-2">
-          <Label htmlFor="university" className="flex items-center gap-2 text-foreground">
-            <GraduationCap className="w-4 h-4" />
-            University *
-          </Label>
-          <Combobox
-            options={universities.map(uni => ({ label: uni, value: uni }))}
-            value={currentUser.personalDetails.university}
-            onChange={(value) => handleInputChange('university', value)}
-            placeholder="Search or type your university..."
-            emptyText="No university found."
-            className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
-          />
+            <Label htmlFor="university" className="flex items-center gap-2 text-foreground">
+                <GraduationCap className="w-4 h-4" />
+                University *
+            </Label>
+            {showCustomUniversityInput ? (
+                <div className="flex items-center gap-2">
+                    <Input
+                        id="customUniversity"
+                        type="text"
+                        placeholder="Enter your university name"
+                        value={currentUser.personalDetails.university}
+                        onChange={(e) => handleInputChange('university', e.target.value)}
+                        className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
+                    />
+                    <Button variant="ghost" onClick={() => setShowCustomUniversityInput(false)}>Search List</Button>
+                </div>
+            ) : (
+                <>
+                    <Combobox
+                        options={universities.map(uni => ({ label: uni, value: uni }))}
+                        value={currentUser.personalDetails.university}
+                        onChange={handleUniversitySelect}
+                        placeholder="Search or select your university..."
+                        emptyText="No university found."
+                        className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
+                    />
+                    <Button 
+                        variant="link" 
+                        className="p-0 h-auto text-xs text-muted-foreground"
+                        onClick={() => setShowCustomUniversityInput(true)}
+                    >
+                        University not listed? Click here to add it.
+                    </Button>
+                </>
+            )}
         </div>
 
         {/* Major */}

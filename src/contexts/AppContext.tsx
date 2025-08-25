@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { countryCodes } from '../data/countryData';
 
 // Types for the application
 export interface UserProfile {
@@ -6,7 +7,10 @@ export interface UserProfile {
   personalDetails: {
     fullName: string;
     email: string;
-    phone: string;
+    phone: {
+      countryCode: string;
+      number: string;
+    };
     location: string;
     university: string;
     major: string;
@@ -53,30 +57,32 @@ export interface AppState {
   profiles: UserProfile[];
   wizardStep: number;
   completedSteps: number[];
+  activeExperienceTab: 'projects' | 'work' | 'certifications' | null;
 }
 
 interface AppContextType {
   state: AppState;
   setState: React.Dispatch<React.SetStateAction<AppState>>;
   navigateToPage: (page: string) => void;
+  navigateToExperienceTab: (tab: 'projects' | 'work' | 'certifications') => void;
   updateCurrentUser: (updates: Partial<UserProfile>) => void;
   createNewProfile: () => void;
   selectProfile: (profileId: string) => void;
   deleteProfile: (profileId: string) => void;
   calculateProfileCompleteness: () => number;
-  getProfileStats: () => { totalSkills: number; totalProjects: number; totalExperience: number };
+  getProfileStats: () => { totalSkills: number; totalProjects: number; totalWorkExperience: number; totalCertifications: number };
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Sample data for demonstration
+// Sample data for demonstration, used only if localStorage is empty
 const sampleProfiles: UserProfile[] = [
   {
     id: 'demo-user-1',
     personalDetails: {
       fullName: 'Alex Johnson',
       email: 'alex.johnson@university.edu',
-      phone: '+1-555-0123',
+      phone: { countryCode: '+1', number: '555-0123' },
       location: 'San Francisco, CA',
       university: 'Stanford University',
       major: 'Computer Science'
@@ -126,7 +132,7 @@ const sampleProfiles: UserProfile[] = [
     personalDetails: {
       fullName: 'Sarah Chen',
       email: 'sarah.chen@college.edu',
-      phone: '+1-555-0456',
+      phone: { countryCode: '+1', number: '' },
       location: 'Boston, MA',
       university: 'MIT',
       major: 'Data Science'
@@ -149,17 +155,50 @@ const sampleProfiles: UserProfile[] = [
   }
 ];
 
+// Helper function to load profiles from localStorage
+const getInitialProfiles = (): UserProfile[] => {
+  try {
+    const savedProfiles = localStorage.getItem('career-copilot-profiles');
+    return savedProfiles ? JSON.parse(savedProfiles) : sampleProfiles;
+  } catch (error) {
+    console.error("Failed to parse profiles from localStorage", error);
+    // If parsing fails, fall back to sample data
+    return sampleProfiles;
+  }
+};
+
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>({
     currentPage: 'welcome',
     currentUser: null,
-    profiles: sampleProfiles,
+    profiles: getInitialProfiles(),
     wizardStep: 1,
-    completedSteps: []
+    completedSteps: [],
+    activeExperienceTab: null
   });
+
+  // useEffect hook to save profiles to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('career-copilot-profiles', JSON.stringify(state.profiles));
+    } catch (error) {
+      console.error("Failed to save profiles to localStorage", error);
+    }
+  }, [state.profiles]);
+
 
   const navigateToPage = (page: string) => {
     setState(prev => ({ ...prev, currentPage: page }));
+  };
+
+  const navigateToExperienceTab = (tab: 'projects' | 'work' | 'certifications') => {
+    setState(prev => ({ 
+      ...prev, 
+      currentPage: 'wizard', 
+      wizardStep: 3, 
+      activeExperienceTab: tab
+    }));
   };
 
   const updateCurrentUser = (updates: Partial<UserProfile>) => {
@@ -182,7 +221,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       personalDetails: {
         fullName: '',
         email: '',
-        phone: '',
+        phone: { countryCode: '+1', number: '' },
         location: '',
         university: '',
         major: ''
@@ -207,7 +246,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       profiles: [...prev.profiles, newProfile],
       currentPage: 'wizard',
       wizardStep: 1,
-      completedSteps: []
+      completedSteps: [],
+      activeExperienceTab: null
     }));
   };
 
@@ -262,12 +302,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const getProfileStats = () => {
-    if (!state.currentUser) return { totalSkills: 0, totalProjects: 0, totalExperience: 0 };
+    if (!state.currentUser) return { totalSkills: 0, totalProjects: 0, totalWorkExperience: 0, totalCertifications: 0 };
 
     return {
       totalSkills: state.currentUser.skills.length,
       totalProjects: state.currentUser.experience.projects.length,
-      totalExperience: state.currentUser.experience.workExperience.length
+      totalWorkExperience: state.currentUser.experience.workExperience.length,
+      totalCertifications: state.currentUser.experience.certifications.length
     };
   };
 
@@ -277,6 +318,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         state,
         setState,
         navigateToPage,
+        navigateToExperienceTab,
         updateCurrentUser,
         createNewProfile,
         selectProfile,

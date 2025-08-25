@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
 import { 
   User, 
   Target, 
@@ -17,13 +18,12 @@ import {
   ArrowRight,
   CheckCircle,
   Plus,
-  Settings,
   LogOut
 } from 'lucide-react';
 import careerCopilotLogo from '../assets/career-copilot-logo.png';
 
 export function DashboardPage() {
-  const { state, navigateToPage, calculateProfileCompleteness, getProfileStats } = useApp();
+  const { state, navigateToPage, navigateToExperienceTab, calculateProfileCompleteness, getProfileStats } = useApp();
   const currentUser = state.currentUser;
 
   if (!currentUser) return null;
@@ -35,23 +35,23 @@ export function DashboardPage() {
     const suggestions = [];
     
     if (!currentUser.personalDetails.fullName || !currentUser.personalDetails.email) {
-      suggestions.push({ text: 'Complete your personal details', action: () => console.log('Navigate to profile') });
+      suggestions.push({ text: 'Complete your personal details', page: 'wizard' });
     }
     
     if (currentUser.skills.length === 0) {
-      suggestions.push({ text: 'Add your skills and expertise', action: () => console.log('Navigate to skills') });
+      suggestions.push({ text: 'Add your skills and expertise', page: 'wizard' });
     }
     
     if (currentUser.experience.projects.length === 0) {
-      suggestions.push({ text: 'Add a project to your portfolio', action: () => console.log('Navigate to projects') });
+      suggestions.push({ text: 'Add a project to your portfolio', page: 'wizard' });
     }
     
     if (!currentUser.goals.shortTermGoal || !currentUser.goals.longTermGoal) {
-      suggestions.push({ text: 'Define your career goals', action: () => console.log('Navigate to goals') });
+      suggestions.push({ text: 'Define your career goals', page: 'wizard' });
     }
     
     if (currentUser.experience.workExperience.length === 0) {
-      suggestions.push({ text: 'Add work experience or internships', action: () => console.log('Navigate to experience') });
+      suggestions.push({ text: 'Add work experience or internships', page: 'wizard' });
     }
 
     return suggestions.slice(0, 3); // Show max 3 suggestions
@@ -78,9 +78,9 @@ export function DashboardPage() {
             </div>
             
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" className="btn-ghost">
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
+              <Button variant="ghost" size="sm" className="btn-ghost" onClick={() => navigateToPage('wizard')}>
+                <User className="w-4 h-4 mr-2" />
+                Edit Profile
               </Button>
               <Button 
                 variant="ghost" 
@@ -115,7 +115,7 @@ export function DashboardPage() {
                 {suggestions.map((suggestion, index) => (
                   <button
                     key={index}
-                    onClick={suggestion.action}
+                    onClick={() => navigateToPage(suggestion.page)}
                     className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-muted/50 transition-colors text-left"
                   >
                     <Plus className="w-4 h-4 text-primary flex-shrink-0" />
@@ -138,8 +138,8 @@ export function DashboardPage() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-slide-up">
-          <Card className="card-elevated p-6 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-slide-up">
+          <Card className="card-elevated p-6 text-center card-interactive" onClick={() => navigateToPage('wizard')}>
             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Code className="w-6 h-6 text-primary" />
             </div>
@@ -147,21 +147,65 @@ export function DashboardPage() {
             <p className="text-muted-foreground">Skills Added</p>
           </Card>
           
-          <Card className="card-elevated p-6 text-center">
-            <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Briefcase className="w-6 h-6 text-accent" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground mb-1">{stats.totalProjects}</h3>
-            <p className="text-muted-foreground">Projects</p>
-          </Card>
-          
-          <Card className="card-elevated p-6 text-center">
-            <div className="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Award className="w-6 h-6 text-success" />
-            </div>
-            <h3 className="text-2xl font-bold text-foreground mb-1">{stats.totalExperience}</h3>
-            <p className="text-muted-foreground">Work Experience</p>
-          </Card>
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Card className="card-elevated p-6 text-center card-interactive" onClick={() => navigateToExperienceTab('projects')}>
+                <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Briefcase className="w-6 h-6 text-accent" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-1">{stats.totalProjects}</h3>
+                <p className="text-muted-foreground">Projects</p>
+              </Card>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <h4 className="font-semibold mb-2">Projects</h4>
+              {currentUser.experience.projects.length > 0 ? (
+                <ul className="list-disc list-inside space-y-1">
+                  {currentUser.experience.projects.map(p => <li key={p.id} className="text-sm truncate">{p.title}</li>)}
+                </ul>
+              ) : <p className="text-sm text-muted-foreground">No projects added yet.</p>}
+            </HoverCardContent>
+          </HoverCard>
+
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Card className="card-elevated p-6 text-center card-interactive" onClick={() => navigateToExperienceTab('work')}>
+                <div className="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-6 h-6 text-success" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-1">{stats.totalWorkExperience}</h3>
+                <p className="text-muted-foreground">Work Experience</p>
+              </Card>
+            </HoverCardTrigger>
+             <HoverCardContent className="w-80">
+              <h4 className="font-semibold mb-2">Work Experience</h4>
+              {currentUser.experience.workExperience.length > 0 ? (
+                <ul className="list-disc list-inside space-y-1">
+                  {currentUser.experience.workExperience.map(w => <li key={w.id} className="text-sm truncate">{w.position} at {w.company}</li>)}
+                </ul>
+              ) : <p className="text-sm text-muted-foreground">No work experience added yet.</p>}
+            </HoverCardContent>
+          </HoverCard>
+
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Card className="card-elevated p-6 text-center card-interactive" onClick={() => navigateToExperienceTab('certifications')}>
+                <div className="w-12 h-12 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-6 h-6 text-warning-foreground" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-1">{stats.totalCertifications}</h3>
+                <p className="text-muted-foreground">Certifications</p>
+              </Card>
+            </HoverCardTrigger>
+             <HoverCardContent className="w-80">
+              <h4 className="font-semibold mb-2">Certifications</h4>
+              {currentUser.experience.certifications.length > 0 ? (
+                <ul className="list-disc list-inside space-y-1">
+                  {currentUser.experience.certifications.map(c => <li key={c.id} className="text-sm truncate">{c.name}</li>)}
+                </ul>
+              ) : <p className="text-sm text-muted-foreground">No certifications added yet.</p>}
+            </HoverCardContent>
+          </HoverCard>
         </div>
 
         {/* Profile Summary Cards */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { PersonalDetailsPage } from './wizard/PersonalDetailsPage';
 import { SkillsPage } from './wizard/SkillsPage';
@@ -6,7 +6,7 @@ import { ExperiencePage } from './wizard/ExperiencePage';
 import { GoalsPage } from './wizard/GoalsPage';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Save } from 'lucide-react';
 
 const steps = [
   { id: 1, title: 'Personal Details', component: PersonalDetailsPage },
@@ -16,8 +16,20 @@ const steps = [
 ];
 
 export function ProfileWizard() {
-  const { state, setState, navigateToPage } = useApp();
+  const { state, navigateToPage } = useApp();
+  const { currentUser } = state;
+  
   const [currentStep, setCurrentStep] = useState(1);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    // A new profile won't have a name, an existing one will.
+    // This determines if we are in "edit" mode.
+    if (currentUser && currentUser.personalDetails.fullName) {
+      setIsEditing(true);
+    }
+  }, [currentUser]);
+
 
   const currentStepData = steps.find(step => step.id === currentStep);
   const CurrentComponent = currentStepData?.component;
@@ -27,7 +39,7 @@ export function ProfileWizard() {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Complete wizard
+      // Complete wizard and go to dashboard
       navigateToPage('dashboard');
     }
   };
@@ -36,7 +48,8 @@ export function ProfileWizard() {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     } else {
-      navigateToPage('welcome');
+      // If editing, go back to dashboard. If creating, go back to welcome.
+      navigateToPage(isEditing ? 'dashboard' : 'welcome');
     }
   };
 
@@ -46,7 +59,9 @@ export function ProfileWizard() {
         {/* Header */}
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-foreground">Profile Setup</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              {isEditing ? 'Edit Profile' : 'Profile Setup'}
+            </h1>
             <div className="text-sm text-muted-foreground">
               Step {currentStep} of {steps.length}
             </div>
@@ -95,7 +110,7 @@ export function ProfileWizard() {
               className="btn-ghost"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              {currentStep === 1 ? 'Back to Welcome' : 'Previous'}
+              {currentStep === 1 ? (isEditing ? 'Back to Dashboard' : 'Back to Welcome') : 'Previous'}
             </Button>
 
             <Button
@@ -103,10 +118,17 @@ export function ProfileWizard() {
               className="btn-hero"
             >
               {currentStep === steps.length ? (
-                <>
-                  <Check className="w-4 h-4 mr-2" />
-                  Complete Setup
-                </>
+                isEditing ? (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Update Profile
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4 mr-2" />
+                    Complete Setup
+                  </>
+                )
               ) : (
                 <>
                   Next
