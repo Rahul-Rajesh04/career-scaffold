@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { countryCodes } from '../data/countryData';
 
 // Types for the application
 export interface UserProfile {
@@ -126,32 +125,6 @@ const sampleProfiles: UserProfile[] = [
       longTermGoal: 'Become a Senior Software Engineer at a tech company'
     },
     lastModified: '2024-08-15'
-  },
-  {
-    id: 'demo-user-2',
-    personalDetails: {
-      fullName: 'Sarah Chen',
-      email: 'sarah.chen@college.edu',
-      phone: { countryCode: '+1', number: '' },
-      location: 'Boston, MA',
-      university: 'MIT',
-      major: 'Data Science'
-    },
-    skills: [
-      { id: 'skill-4', name: 'Python', category: 'Programming Languages', proficiency: 'Advanced' },
-      { id: 'skill-5', name: 'Machine Learning', category: 'Data Science', proficiency: 'Intermediate' }
-    ],
-    experience: {
-      projects: [],
-      workExperience: [],
-      certifications: []
-    },
-    goals: {
-      interests: ['Artificial Intelligence', 'Data Analysis'],
-      shortTermGoal: 'Complete machine learning certification',
-      longTermGoal: 'Lead AI research at a technology company'
-    },
-    lastModified: '2024-08-10'
   }
 ];
 

@@ -3,7 +3,6 @@ import { useApp } from '../../contexts/AppContext';
 import { careerGoals } from '../../data/skillsData';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
 import { Combobox } from '../ui/combobox';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -113,7 +112,7 @@ export function GoalsPage() {
           )}
         </div>
 
-        {/* Career Goals */}
+        {/* Career Goals Input Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Short-term Goal */}
           <div className="space-y-4">
@@ -121,33 +120,18 @@ export function GoalsPage() {
               <Target className="w-5 h-5 text-primary" />
               <Label className="text-lg font-semibold text-foreground">Short-term Goal</Label>
             </div>
-            
             <p className="text-muted-foreground text-sm mb-4">
               What do you want to achieve in the next 6-12 months?
             </p>
-
             <Combobox
               options={careerGoals.shortTerm.map(goal => ({ label: goal, value: goal }))}
               value={currentUser.goals.shortTermGoal}
               onChange={(value) => handleGoalChange('shortTermGoal', value)}
               placeholder="Select or type your short-term goal..."
-              emptyText="No matching goals found."
+              emptyText="No matching goals found. Type to add your own."
               className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
+              allowCustomValue={true}
             />
-
-            {currentUser.goals.shortTermGoal && (
-              <div className="card-elevated p-4 bg-primary/5 border-primary/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Target className="w-3 h-3 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-foreground mb-1">Your Short-term Goal</h4>
-                    <p className="text-sm text-muted-foreground">{currentUser.goals.shortTermGoal}</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Long-term Goal */}
@@ -156,35 +140,54 @@ export function GoalsPage() {
               <Star className="w-5 h-5 text-accent" />
               <Label className="text-lg font-semibold text-foreground">Long-term Goal</Label>
             </div>
-            
             <p className="text-muted-foreground text-sm mb-4">
               Where do you see yourself in 3-5 years?
             </p>
-
             <Combobox
               options={careerGoals.longTerm.map(goal => ({ label: goal, value: goal }))}
               value={currentUser.goals.longTermGoal}
               onChange={(value) => handleGoalChange('longTermGoal', value)}
               placeholder="Select or type your long-term goal..."
-              emptyText="No matching goals found."
+              emptyText="No matching goals found. Type to add your own."
               className="h-12 bg-muted/30 border-border/50 focus:border-primary/50"
+              allowCustomValue={true}
             />
-
-            {currentUser.goals.longTermGoal && (
-              <div className="card-elevated p-4 bg-accent/5 border-accent/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-accent/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Star className="w-3 h-3 text-accent" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-foreground mb-1">Your Long-term Goal</h4>
-                    <p className="text-sm text-muted-foreground">{currentUser.goals.longTermGoal}</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+        
+        {/* Selected Goals Display Section */}
+        {(currentUser.goals.shortTermGoal || currentUser.goals.longTermGoal) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {currentUser.goals.shortTermGoal ? (
+                  <div className="card-elevated p-4 bg-primary/5 border-primary/20">
+                      <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Target className="w-3 h-3 text-primary" />
+                          </div>
+                          <div>
+                              <h4 className="font-medium text-foreground mb-1">Your Short-term Goal</h4>
+                              <p className="text-sm text-muted-foreground">{currentUser.goals.shortTermGoal}</p>
+                          </div>
+                      </div>
+                  </div>
+              ) : <div></div>}
+
+              {currentUser.goals.longTermGoal ? (
+                  <div className="card-elevated p-4 bg-accent/5 border-accent/20">
+                      <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 bg-accent/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Star className="w-3 h-3 text-accent" />
+                          </div>
+                          <div>
+                              <h4 className="font-medium text-foreground mb-1">Your Long-term Goal</h4>
+                              <p className="text-sm text-muted-foreground">{currentUser.goals.longTermGoal}</p>
+                          </div>
+                      </div>
+                  </div>
+              ) : <div></div>}
+          </div>
+        )}
+
 
         {/* Goal Alignment Message */}
         {currentUser.goals.shortTermGoal && currentUser.goals.longTermGoal && (

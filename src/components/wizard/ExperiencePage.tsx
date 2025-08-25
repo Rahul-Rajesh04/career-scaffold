@@ -50,7 +50,7 @@ const ProjectForm = ({ item, onSave, onCancel }: { item?: Project, onSave: (data
       title: data.title,
       description: data.description,
       technologies: data.technologies,
-      url: data.url
+      url: data.url,
     });
   }
 
@@ -109,13 +109,7 @@ const WorkExperienceForm = ({ item, onSave, onCancel }: { item?: WorkExperience,
     });
 
     function onSubmit(data: WorkExperienceFormValues) {
-        onSave({
-            id: item?.id || `work-${Date.now()}`,
-            company: data.company,
-            position: data.position,
-            duration: data.duration,
-            description: data.description
-        });
+        onSave({ id: item?.id || `work-${Date.now()}`, company: data.company, position: data.position, duration: data.duration, description: data.description });
     }
 
     return (
@@ -168,12 +162,7 @@ const CertificationForm = ({ item, onSave, onCancel }: { item?: Certification, o
     });
 
     function onSubmit(data: CertificationFormValues) {
-        onSave({
-            id: item?.id || `cert-${Date.now()}`,
-            name: data.name,
-            issuer: data.issuer,
-            date: data.date
-        });
+        onSave({ id: item?.id || `cert-${Date.now()}`, name: data.name, issuer: data.issuer, date: data.date });
     }
 
     return (
@@ -214,7 +203,7 @@ const CertificationForm = ({ item, onSave, onCancel }: { item?: Certification, o
 
 // --- Main ExperiencePage Component ---
 export function ExperiencePage() {
-  const { state, updateCurrentUser } = useApp();
+  const { state, setState, updateCurrentUser } = useApp();
   const currentUser = state.currentUser;
   const [editingItem, setEditingItem] = useState<EditingItem>(null);
   const [activeTab, setActiveTab] = useState('projects');
@@ -224,9 +213,9 @@ export function ExperiencePage() {
     if (state.activeExperienceTab) {
       setActiveTab(state.activeExperienceTab);
       // Reset the state to prevent it from always opening on the same tab
-      // Remove this line since activeExperienceTab is not a property of UserProfile
+      setState(prev => ({...prev, activeExperienceTab: null}));
     }
-  }, [state.activeExperienceTab]);
+  }, [state.activeExperienceTab, setState]);
 
 
   if (!currentUser) return null;
@@ -384,7 +373,6 @@ export function ExperiencePage() {
             <DialogTitle>
               {editingItem?.data ? 'Edit' : 'Add'} {editingItem?.type === 'project' ? 'Project' : editingItem?.type === 'work' ? 'Work Experience' : 'Certification'}
             </DialogTitle>
-            <DialogClose asChild><Button type="button" variant="outline">Cancel</Button></DialogClose>
           </DialogHeader>
           {editingItem?.type === 'project' && <ProjectForm item={editingItem.data} onSave={handleSave} onCancel={() => setEditingItem(null)} />}
           {editingItem?.type === 'work' && <WorkExperienceForm item={editingItem.data} onSave={handleSave} onCancel={() => setEditingItem(null)} />}
