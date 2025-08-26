@@ -71,21 +71,34 @@ export async function generateRoadmapWithGemini(user: UserProfile): Promise<any>
 
 export async function analyzeResumeWithGemini(resumeText: string): Promise<any> {
     const prompt = `
-        Analyze the following resume text and provide feedback.
-        Resume: "${resumeText}"
+        Your first task is to determine if the following text is a professional resume. A resume typically includes sections like "Experience", "Education", "Skills", and contact information.
 
-        Please generate a JSON object with the following structure:
+        If the text does NOT appear to be a resume, return ONLY the following JSON object:
         {
-          "score": 85, // A score from 0-100
-          "strengths": ["Strength 1", "Strength 2"],
-          "weaknesses": ["Weakness 1", "Weakness 2"],
+          "error": "Not a Resume",
+          "message": "The uploaded text does not appear to be a resume. Please upload a proper resume for analysis."
+        }
+
+        If the text IS a resume, please analyze it from the perspective of a helpful and constructive career coach.
+
+        Resume Text: "${resumeText}"
+
+        If it is a resume, generate a JSON object with the following structure. Calculate the score based on the rubric provided.
+        {
+          "score": 0, // Calculate a score from 0-100 based on the resume's overall quality. A score below 60 indicates significant issues. A score between 70-85 is good and should be earned. A score of 90+ is exceptional and rare, reserved for resumes with clear, quantifiable achievements, strong action verbs, and perfect formatting. The score should directly reflect the strengths and weaknesses you identify.
+          "strengths": ["Identify key strengths such as clear impact statements, good formatting, and relevant skills."],
+          "weaknesses": ["Point out areas for improvement in a constructive manner. Focus on things like weak action verbs or lack of metrics."],
           "suggestions": [
             {
-              "category": "Keyword Optimization",
+              "category": "Impact and Metrics",
               "priority": "high",
-              "items": ["Suggestion 1", "Suggestion 2"]
+              "items": ["Provide actionable suggestions to help the user quantify their achievements and show more impact."]
             },
-            ... (other categories)
+            {
+              "category": "Clarity and Readability",
+              "priority": "medium",
+              "items": ["Suggest improvements for clarity, conciseness, and professional formatting."]
+            }
           ]
         }
     `;
